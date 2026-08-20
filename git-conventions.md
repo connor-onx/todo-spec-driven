@@ -33,14 +33,35 @@ multiple PRs, link them and say so in the story.
 
 ## PR titles and descriptions
 
-When using the automatic PR creation from Feature Close Out, the title is
-generated from the story ID and the latest commit message — which only
-works if commits follow the format above.
+Use the `/close-out` skill (`.claude/skills/close-out/SKILL.md`) to push
+the branch and open (or reuse) the PR. It generates the title from the
+story ID and the latest commit message — which only works if commits
+follow the format above.
 
 Description should include: what changed, which schema tables were
-touched (if any), and a link back to the Jira story.
+touched (if any), and a link back to the Jira story. `/close-out` also
+comments the PR link on the linked Jira issue -- it never changes the
+issue's status. Opening a PR doesn't mean the story has moved in the
+workflow; if it was in dev, it stays in dev until someone deliberately
+moves it.
+
+## Traceability records
+
+`.claude/traceability/<STORY-ID>.json` is committed to the story's own
+feature branch — never directly to `main`. It travels with the PR and is
+reviewed alongside the code; it only reaches `main` when the PR merges.
+
+This is enforced mechanically, not just by convention: a `pre-commit` git
+hook (`.githooks/pre-commit`) regenerates the record and stages it as part
+of every commit made on a story branch, so it's never left a commit behind
+the code it describes. `npm install` wires this up automatically (the
+`prepare` script sets `core.hooksPath`) — no manual setup per clone.
 
 ## What breaks if this isn't followed
 
-- The automatic PR title generation in Feature Close Out pulls the story
-  ID the same way — same failure mode.
+- The automatic PR title generation in `/close-out` pulls the story ID the
+  same way — same failure mode.
+- If `npm install` was never run (so `core.hooksPath` isn't set), commits
+  won't auto-update the traceability record — run `/close-out` before
+  opening the PR to catch it up, or `npm install` to fix the hook going
+  forward.

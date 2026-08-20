@@ -22,6 +22,10 @@
 #     ]
 #   }
 # }
+#
+# Also invoked from .githooks/pre-commit (every commit on a story branch)
+# and from the /close-out skill. Uses `node` rather than `python3` for the
+# JSON write, since node is already a hard requirement for this project.
 
 set -euo pipefail
 
@@ -39,7 +43,16 @@ if [ -z "$STORY_ID" ]; then
   exit 0
 fi
 
-CHANGED_FILES="$(git diff --name-only "origin/${BASE_BRANCH}...HEAD" 2>/dev/null || git diff --name-only "${BASE_BRANCH}...HEAD" 2>/dev/null || echo "")"
+COMMITTED_CHANGED_FILES="$(git diff --name-only "origin/${BASE_BRANCH}...HEAD" 2>/dev/null || git diff --name-only "${BASE_BRANCH}...HEAD" 2>/dev/null || echo "")"
+
+# Also fold in currently-staged changes. This matters when this script runs
+# from a `pre-commit` hook: HEAD still points at the *previous* commit at
+# that point, so a diff against HEAD alone would miss whatever is about to
+# be committed. Unioning with the staged diff keeps the record accurate
+# whether this runs standalone, from /close-out, or from pre-commit.
+STAGED_CHANGED_FILES="$(git diff --cached --name-only 2>/dev/null || echo "")"
+
+CHANGED_FILES="$(printf '%s\n%s\n' "$COMMITTED_CHANGED_FILES" "$STAGED_CHANGED_FILES" | sed '/^$/d' | sort -u)"
 
 TEST_FILES="$(echo "$CHANGED_FILES" | grep -E '(test|spec)' || true)"
 
@@ -50,35 +63,44 @@ SUMMARY_FILE=".claude/task-summary.json"
 TABLES_TOUCHED="[]"
 SUMMARY_TEXT=""
 if [ -f "$SUMMARY_FILE" ]; then
-  TABLES_TOUCHED="$(python3 -c "import json,sys; print(json.dumps(json.load(open('$SUMMARY_FILE')).get('tables_touched', [])))")"
-  SUMMARY_TEXT="$(python3 -c "import json,sys; print(json.load(open('$SUMMARY_FILE')).get('summary', ''))")"
+  TABLES_TOUCHED="$(SUMMARY_FILE="$SUMMARY_FILE" node -e "
+    const fs = require('fs')
+    const data = JSON.parse(fs.readFileSync(process.env.SUMMARY_FILE, 'utf8'))
+    process.stdout.write(JSON.stringify(data.tables_touched || []))
+  ")"
+  SUMMARY_TEXT="$(SUMMARY_FILE="$SUMMARY_FILE" node -e "
+    const fs = require('fs')
+    const data = JSON.parse(fs.readFileSync(process.env.SUMMARY_FILE, 'utf8'))
+    process.stdout.write(data.summary || '')
+  ")"
 fi
 
 mkdir -p .claude/traceability
 OUT_FILE=".claude/traceability/${STORY_ID}.json"
 
-python3 - "$OUT_FILE" "$STORY_ID" "$BRANCH" "$SUMMARY_TEXT" "$TABLES_TOUCHED" "$CHANGED_FILES" "$TEST_FILES" << 'PYEOF'
-import json, sys
-from datetime import datetime, timezone
+STORY_ID="$STORY_ID" \
+BRANCH="$BRANCH" \
+SUMMARY_TEXT="$SUMMARY_TEXT" \
+TABLES_JSON="$TABLES_TOUCHED" \
+CHANGED_FILES="$CHANGED_FILES" \
+TEST_FILES="$TEST_FILES" \
+OUT_FILE="$OUT_FILE" \
+node -e "
+  const fs = require('fs')
 
-out_file, story_id, branch, summary_text, tables_json, changed_files_raw, test_files_raw = sys.argv[1:8]
+  const changedFiles = process.env.CHANGED_FILES.split('\n').filter(Boolean)
+  const testFiles = process.env.TEST_FILES.split('\n').filter(Boolean)
 
-changed_files = [l for l in changed_files_raw.splitlines() if l.strip()]
-test_files = [l for l in test_files_raw.splitlines() if l.strip()]
+  const record = {
+    story_id: process.env.STORY_ID,
+    branch: process.env.BRANCH,
+    updated_at: new Date().toISOString(),
+    files_changed: changedFiles,
+    tests_added_or_changed: testFiles,
+    schema_tables_touched: JSON.parse(process.env.TABLES_JSON),
+    agent_summary: process.env.SUMMARY_TEXT,
+  }
 
-record = {
-    "story_id": story_id,
-    "branch": branch,
-    "updated_at": datetime.now(timezone.utc).isoformat(),
-    "files_changed": changed_files,
-    "tests_added_or_changed": test_files,
-    "schema_tables_touched": json.loads(tables_json),
-    "agent_summary": summary_text,
-}
-
-with open(out_file, "w") as f:
-    json.dump(record, f, indent=2)
-    f.write("\n")
-
-print(f"Wrote {out_file}")
-PYEOF
+  fs.writeFileSync(process.env.OUT_FILE, JSON.stringify(record, null, 2) + '\n')
+  console.log('Wrote ' + process.env.OUT_FILE)
+"
