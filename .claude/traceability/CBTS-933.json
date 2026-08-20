@@ -1,8 +1,9 @@
 {
   "story_id": "CBTS-933",
   "branch": "worktree-CBTS-933-add-todo-to-list",
-  "updated_at": "2026-08-20T17:58:24.108Z",
+  "updated_at": "2026-08-20T18:24:22.458Z",
   "files_changed": [
+    ".claude/traceability/CBTS-933.json",
     "app/add-todo-form.tsx",
     "app/lists/[id]/page.tsx",
     "app/lists-view.tsx",
