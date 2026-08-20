@@ -1,0 +1,18 @@
+{
+  "story_id": "CBTS-933",
+  "branch": "worktree-CBTS-933-add-todo-to-list",
+  "updated_at": "2026-08-20T18:24:22.458Z",
+  "files_changed": [
+    ".claude/traceability/CBTS-933.json",
+    "app/add-todo-form.tsx",
+    "app/lists/[id]/page.tsx",
+    "app/lists-view.tsx",
+    "app/todos-view.tsx",
+    "lib/actions/todos.ts"
+  ],
+  "tests_added_or_changed": [],
+  "schema_tables_touched": [
+    "lists"
+  ],
+  "agent_summary": "Implemented CBTS-932 (Create a list): createListAction Server Action validates and creates a List row and revalidates the home page; ListsView and CreateListForm components render the list and the creation form; app/page.tsx reads lists via Prisma. No schema/migration changes (List model already existed). Also cleaned up syntax across the app (no semicolons, no trailing commas, import grouping/order, no space before self-closing JSX tags) and documented the new conventions in next-js-syntax.md and next-js-code-guidelines.md."
+}
