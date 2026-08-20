@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import type { List } from "@/app/generated/prisma/client"
 
 interface ListsViewProps {
@@ -20,7 +22,7 @@ export function ListsView({ lists }: ListsViewProps) {
           key={list.id}
           className="rounded border border-black/[.08] px-3 py-2 dark:border-white/[.145]"
         >
-          {list.name}
+          <Link href={`/lists/${list.id}`}>{list.name}</Link>
         </li>
       ))}
     </ul>
