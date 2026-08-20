@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# pre-commit
+#
+# Keeps .claude/traceability/<STORY_ID>.json in sync with every commit made
+# on a story branch, so the traceability record is never a commit behind
+# the code it describes -- it's committed together with the change, not
+# added later as an afterthought.
+#
+# Wired up via `core.hooksPath=.githooks` (see the `prepare` script in
+# package.json, which sets this automatically on `npm install` -- no manual
+# setup step, no extra dependency like husky).
+#
+# Non-fatal by design: bookkeeping should never be able to block a real
+# commit. If the traceability script can't run for any reason, we let the
+# commit through anyway.
+
+if [ -f .claude/hooks/record-traceability.sh ]; then
+  bash .claude/hooks/record-traceability.sh || true
+  git add .claude/traceability 2>/dev/null || true
+fi
+
+exit 0
