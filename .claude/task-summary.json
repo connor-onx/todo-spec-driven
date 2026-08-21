@@ -1,4 +1,4 @@
 {
   "tables_touched": ["todos"],
-  "summary": "Implemented CBTS-934 (Toggle todo complete): toggleTodoAction Server Action validates the todo id and updates its completed/completedAt fields via Prisma, revalidating the list page; ToggleTodoButton is a new client component using useActionState to call the action. No schema/migration changes (completed/completedAt already existed on Todo). Also fixed import-order violations (named and `import type` imports must share one group, sorted alphabetically by module path, no blank line between them) in add-todo-form.tsx, toggle-todo-button.tsx, and lists/[id]/page.tsx, and clarified that rule in next-js-syntax.md."
+  "summary": "Implemented CBTS-935 (Delete a todo): deleteTodoAction Server Action validates the todo id and deletes the row via Prisma (prisma.todo.delete), revalidating the list page; DeleteTodoButton is a new client component using useActionState, with a window.confirm() guard on submit to satisfy the required confirmation-before-delete acceptance criterion. No schema/migration changes -- Todo has no dependents, so this is a plain single-row delete."
 }
