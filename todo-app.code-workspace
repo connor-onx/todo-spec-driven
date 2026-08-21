@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "todo-app (main)",
+			"path": "."
+		},
+		{
+			"name": "worktrees",
+			"path": ".claude/worktrees"
+		}
+	],
+	"settings": {}
+}
