@@ -31,3 +31,33 @@ export async function createTodoAction(
   revalidatePath(`/lists/${listId}`)
   return {}
 }
+
+export interface ToggleTodoState {
+  error?: string
+}
+
+export async function toggleTodoAction(
+  todoId: number,
+  completed: boolean,
+  _prevState: ToggleTodoState,
+  _formData: FormData
+): Promise<ToggleTodoState> {
+  if (!Number.isInteger(todoId) || todoId <= 0) {
+    return { error: "Invalid todo" }
+  }
+
+  try {
+    const updated = await prisma.todo.update({
+      where: { id: todoId },
+      data: {
+        completed,
+        completedAt: completed ? new Date() : null
+      }
+    })
+    revalidatePath(`/lists/${updated.listId}`)
+  } catch {
+    return { error: "Failed to update todo. Please try again." }
+  }
+
+  return {}
+}

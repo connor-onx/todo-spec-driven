@@ -1,4 +1,5 @@
 import type { Todo } from "@/app/generated/prisma/client"
+import { ToggleTodoButton } from "@/app/toggle-todo-button"
 
 interface TodosViewProps {
   todos: Todo[]
@@ -18,9 +19,12 @@ export function TodosView({ todos }: TodosViewProps) {
       {todos.map((todo) => (
         <li
           key={todo.id}
-          className="rounded border border-black/[.08] px-3 py-2 dark:border-white/[.145]"
+          className="flex items-center gap-3 rounded border border-black/[.08] px-3 py-2 dark:border-white/[.145]"
         >
-          {todo.title}
+          <ToggleTodoButton todoId={todo.id} completed={todo.completed}/>
+          <span className={todo.completed ? "line-through text-zinc-400 dark:text-zinc-600" : ""}>
+            {todo.title}
+          </span>
         </li>
       ))}
     </ul>

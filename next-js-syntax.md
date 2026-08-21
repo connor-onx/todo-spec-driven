@@ -51,12 +51,19 @@ const user = {
 
 ### Import Order
 
-Default imports first, then a blank line, then named/specific (`{ }`)
-imports, then a blank line, then side-effect-only imports (no bindings —
-e.g. a CSS import). Alphabetize within each group by the module path
-string, and keep each group's imports contiguous — no blank line between
-individual import lines within the same group, whether the module is an
-external package or an internal `@/` alias.
+Three groups, in this order, separated by exactly one blank line between
+groups and no blank line between lines within a group:
+
+1. Default imports (`import x from "..."`)
+2. Named/specific imports — anything with `{ }`, including plain named
+   imports and `import type { }` imports. These are a single group; do not
+   split plain named imports from type-only named imports, and do not add
+   blank lines between them.
+3. Side-effect-only imports (no bindings — e.g. a CSS import)
+
+Within every group, sort the import lines alphabetically by module path
+string (external package or internal `@/` alias — treat them the same),
+regardless of whether the import is a default, named, or type import.
 
 ```tsx
 import axios from "axios"

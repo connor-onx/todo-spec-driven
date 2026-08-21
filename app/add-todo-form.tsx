@@ -1,8 +1,7 @@
 "use client"
 
-import { useActionState } from "react"
-
 import { createTodoAction, type CreateTodoState } from "@/lib/actions/todos"
+import { useActionState } from "react"
 
 const initialState: CreateTodoState = {}
 
