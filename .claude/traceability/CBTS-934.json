@@ -1,8 +1,10 @@
 {
   "story_id": "CBTS-934",
   "branch": "worktree-CBTS-934-toggle-todo-complete",
-  "updated_at": "2026-08-21T14:13:52.361Z",
+  "updated_at": "2026-08-21T14:14:30.797Z",
   "files_changed": [
+    ".claude/task-summary.json",
+    ".claude/traceability/CBTS-934.json",
     "app/add-todo-form.tsx",
     "app/lists/[id]/page.tsx",
     "app/todos-view.tsx",
