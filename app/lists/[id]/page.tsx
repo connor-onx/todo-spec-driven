@@ -1,8 +1,7 @@
-import { notFound } from "next/navigation"
-
 import { AddTodoForm } from "@/app/add-todo-form"
 import { TodosView } from "@/app/todos-view"
 import { prisma } from "@/lib/prisma"
+import { notFound } from "next/navigation"
 
 export default async function ListPage(props: PageProps<"/lists/[id]">) {
   const { id } = await props.params

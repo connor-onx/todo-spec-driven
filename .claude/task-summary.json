@@ -1,4 +1,4 @@
 {
-  "tables_touched": ["lists"],
-  "summary": "Implemented CBTS-932 (Create a list): createListAction Server Action validates and creates a List row and revalidates the home page; ListsView and CreateListForm components render the list and the creation form; app/page.tsx reads lists via Prisma. No schema/migration changes (List model already existed). Also cleaned up syntax across the app (no semicolons, no trailing commas, import grouping/order, no space before self-closing JSX tags) and documented the new conventions in next-js-syntax.md and next-js-code-guidelines.md."
+  "tables_touched": ["todos"],
+  "summary": "Implemented CBTS-934 (Toggle todo complete): toggleTodoAction Server Action validates the todo id and updates its completed/completedAt fields via Prisma, revalidating the list page; ToggleTodoButton is a new client component using useActionState to call the action. No schema/migration changes (completed/completedAt already existed on Todo). Also fixed import-order violations (named and `import type` imports must share one group, sorted alphabetically by module path, no blank line between them) in add-todo-form.tsx, toggle-todo-button.tsx, and lists/[id]/page.tsx, and clarified that rule in next-js-syntax.md."
 }
