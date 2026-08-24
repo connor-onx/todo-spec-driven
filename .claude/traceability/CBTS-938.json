@@ -1,8 +1,9 @@
 {
   "story_id": "CBTS-938",
   "branch": "worktree-CBTS-938-set-due-date-on-todo",
-  "updated_at": "2026-08-24T14:53:51.858Z",
+  "updated_at": "2026-08-24T14:54:26.802Z",
   "files_changed": [
+    ".claude/traceability/CBTS-938.json",
     "app/due-date-form.tsx",
     "app/todos-view.tsx",
     "lib/actions/todos.ts"
