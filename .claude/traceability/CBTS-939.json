@@ -1,8 +1,9 @@
 {
   "story_id": "CBTS-939",
   "branch": "worktree-worktree-CBTS-939-set-priority-on-a-todo",
-  "updated_at": "2026-08-24T14:53:10.499Z",
+  "updated_at": "2026-08-24T14:53:44.570Z",
   "files_changed": [
+    ".claude/traceability/CBTS-939.json",
     "app/todo-priority-select.tsx",
     "app/todos-view.tsx",
     "lib/actions/todos.ts"
