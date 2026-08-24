@@ -1,8 +1,9 @@
 {
   "story_id": "CBTS-939",
   "branch": "worktree-worktree-CBTS-939-set-priority-on-a-todo",
-  "updated_at": "2026-08-24T14:53:44.570Z",
+  "updated_at": "2026-08-24T14:55:34.192Z",
   "files_changed": [
+    ".claude/task-summary.json",
     ".claude/traceability/CBTS-939.json",
     "app/todo-priority-select.tsx",
     "app/todos-view.tsx",
@@ -10,8 +11,7 @@
   ],
   "tests_added_or_changed": [],
   "schema_tables_touched": [
-    "lists",
     "todos"
   ],
-  "agent_summary": "Implemented CBTS-936 (Delete a list): deleteListAction Server Action deletes a List by id via Prisma and redirects to '/'. DeleteListButton is a new client component that skips the confirmation step for an empty list (single click deletes immediately) but shows an inline 'Delete this list and its N todo(s)?' confirm/cancel step for a non-empty list, per AC. Schema change: Todo.list relation's onDelete set to Cascade (previously unspecified/Restrict), with a hand-authored migration (20260821150000_cascade_delete_todos_on_list_delete) recreating the todos_listId_fkey constraint with ON DELETE CASCADE -- flagged for migration review per the story's implementation notes, since it wasn't run against a live database in this session."
+  "agent_summary": "Implemented CBTS-939 (Set priority on a todo): added setTodoPriorityAction Server Action that validates the todoId and priority value and updates Todo.priority via Prisma, revalidating the owning list's path. Added a new TodoPrioritySelect client component (a <select> of LOW/MEDIUM/HIGH, styled per priority, auto-submitting on change via useActionState) and wired it into TodosView between the todo title and the delete button. No schema change was needed -- the Todo.priority column and Priority enum already existed in the schema."
 }
