@@ -34,11 +34,7 @@ model Todo {
   updatedAt   DateTime  @updatedAt
 
   listId      Int
-  // onDelete intentionally left unspecified -- defaults to restrict,
-  // meaning deleting a List with Todos attached will currently fail.
-  // Whether that's actually correct (restrict vs. cascade vs. orphan)
-  // is exactly what the "Delete a list" story below needs to decide.
-  list        List      @relation(fields: [listId], references: [id])
+  list        List      @relation(fields: [listId], references: [id], onDelete: Cascade)
 
   @@index([listId])
   @@map("todos")

@@ -1,0 +1,24 @@
+{
+  "story_id": "CBTS-936",
+  "branch": "worktree-worktree-CBTS-936-delete-a-list",
+  "updated_at": "2026-08-24T14:06:01.897Z",
+  "files_changed": [
+    ".claude/task-summary.json",
+    ".claude/traceability/CBTS-935.json",
+    ".claude/traceability/CBTS-936.json",
+    "app/delete-list-button.tsx",
+    "app/delete-todo-button.tsx",
+    "app/lists/[id]/page.tsx",
+    "app/todos-view.tsx",
+    "lib/actions/lists.ts",
+    "lib/actions/todos.ts",
+    "prisma/migrations/20260821150000_cascade_delete_todos_on_list_delete/migration.sql",
+    "prisma/schema.prisma"
+  ],
+  "tests_added_or_changed": [],
+  "schema_tables_touched": [
+    "lists",
+    "todos"
+  ],
+  "agent_summary": "Implemented CBTS-936 (Delete a list): deleteListAction Server Action deletes a List by id via Prisma and redirects to '/'. DeleteListButton is a new client component that skips the confirmation step for an empty list (single click deletes immediately) but shows an inline 'Delete this list and its N todo(s)?' confirm/cancel step for a non-empty list, per AC. Schema change: Todo.list relation's onDelete set to Cascade (previously unspecified/Restrict), with a hand-authored migration (20260821150000_cascade_delete_todos_on_list_delete) recreating the todos_listId_fkey constraint with ON DELETE CASCADE -- flagged for migration review per the story's implementation notes, since it wasn't run against a live database in this session."
+}
