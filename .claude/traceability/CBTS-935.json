@@ -1,0 +1,17 @@
+{
+  "story_id": "CBTS-935",
+  "branch": "worktree-CBTS-935-delete-a-todo",
+  "updated_at": "2026-08-21T17:55:12.312Z",
+  "files_changed": [
+    ".claude/task-summary.json",
+    ".claude/traceability/CBTS-935.json",
+    "app/delete-todo-button.tsx",
+    "app/todos-view.tsx",
+    "lib/actions/todos.ts"
+  ],
+  "tests_added_or_changed": [],
+  "schema_tables_touched": [
+    "todos"
+  ],
+  "agent_summary": "Implemented CBTS-935 (Delete a todo): deleteTodoAction Server Action validates the todo id and deletes the row via Prisma (prisma.todo.delete), revalidating the list page; DeleteTodoButton is a new client component using useActionState, with a window.confirm() guard on submit to satisfy the required confirmation-before-delete acceptance criterion. No schema/migration changes -- Todo has no dependents, so this is a plain single-row delete."
+}

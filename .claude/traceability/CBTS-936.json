@@ -1,13 +1,17 @@
 {
   "story_id": "CBTS-936",
   "branch": "worktree-worktree-CBTS-936-delete-a-list",
-  "updated_at": "2026-08-21T17:54:35.592Z",
+  "updated_at": "2026-08-24T14:06:01.897Z",
   "files_changed": [
     ".claude/task-summary.json",
+    ".claude/traceability/CBTS-935.json",
     ".claude/traceability/CBTS-936.json",
     "app/delete-list-button.tsx",
+    "app/delete-todo-button.tsx",
     "app/lists/[id]/page.tsx",
+    "app/todos-view.tsx",
     "lib/actions/lists.ts",
+    "lib/actions/todos.ts",
     "prisma/migrations/20260821150000_cascade_delete_todos_on_list_delete/migration.sql",
     "prisma/schema.prisma"
   ],
