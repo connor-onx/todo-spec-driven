@@ -62,6 +62,42 @@ export async function toggleTodoAction(
   return {}
 }
 
+export interface UpdateDueDateState {
+  error?: string
+}
+
+export async function updateDueDateAction(
+  todoId: number,
+  _prevState: UpdateDueDateState,
+  formData: FormData
+): Promise<UpdateDueDateState> {
+  if (!Number.isInteger(todoId) || todoId <= 0) {
+    return { error: "Invalid todo" }
+  }
+
+  const rawDueDate = String(formData.get("dueDate") ?? "").trim()
+  let dueDate: Date | null = null
+
+  if (rawDueDate) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(rawDueDate)) {
+      return { error: "Invalid due date" }
+    }
+    dueDate = new Date(`${rawDueDate}T00:00:00.000Z`)
+  }
+
+  try {
+    const updated = await prisma.todo.update({
+      where: { id: todoId },
+      data: { dueDate }
+    })
+    revalidatePath(`/lists/${updated.listId}`)
+  } catch {
+    return { error: "Failed to update due date. Please try again." }
+  }
+
+  return {}
+}
+
 export interface DeleteTodoState {
   error?: string
 }

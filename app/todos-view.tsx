@@ -1,5 +1,6 @@
 import type { Todo } from "@/app/generated/prisma/client"
 import { DeleteTodoButton } from "@/app/delete-todo-button"
+import { DueDateForm } from "@/app/due-date-form"
 import { ToggleTodoButton } from "@/app/toggle-todo-button"
 
 interface TodosViewProps {
@@ -26,6 +27,7 @@ export function TodosView({ todos }: TodosViewProps) {
           <span className={todo.completed ? "line-through text-zinc-400 dark:text-zinc-600" : ""}>
             {todo.title}
           </span>
+          <DueDateForm todoId={todo.id} dueDate={todo.dueDate}/>
           <DeleteTodoButton todoId={todo.id} listId={todo.listId}/>
         </li>
       ))}
