@@ -1,6 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
+import type { Priority } from "@/app/generated/prisma/client"
 import { revalidatePath } from "next/cache"
 
 export interface CreateTodoState {
@@ -57,6 +58,38 @@ export async function toggleTodoAction(
     revalidatePath(`/lists/${updated.listId}`)
   } catch {
     return { error: "Failed to update todo. Please try again." }
+  }
+
+  return {}
+}
+
+export interface SetTodoPriorityState {
+  error?: string
+}
+
+export async function setTodoPriorityAction(
+  todoId: number,
+  _prevState: SetTodoPriorityState,
+  formData: FormData
+): Promise<SetTodoPriorityState> {
+  const priority = String(formData.get("priority") ?? "")
+
+  if (!Number.isInteger(todoId) || todoId <= 0) {
+    return { error: "Invalid todo" }
+  }
+
+  if (!["LOW", "MEDIUM", "HIGH"].includes(priority)) {
+    return { error: "Invalid priority" }
+  }
+
+  try {
+    const updated = await prisma.todo.update({
+      where: { id: todoId },
+      data: { priority: priority as Priority }
+    })
+    revalidatePath(`/lists/${updated.listId}`)
+  } catch {
+    return { error: "Failed to update priority. Please try again." }
   }
 
   return {}

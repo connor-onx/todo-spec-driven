@@ -1,0 +1,19 @@
+{
+  "story_id": "CBTS-939",
+  "branch": "worktree-worktree-CBTS-939-set-priority-on-a-todo",
+  "updated_at": "2026-08-24T15:11:32.405Z",
+  "files_changed": [
+    ".claude/task-summary.json",
+    ".claude/traceability/CBTS-938.json",
+    ".claude/traceability/CBTS-939.json",
+    "app/due-date-form.tsx",
+    "app/todo-priority-select.tsx",
+    "app/todos-view.tsx",
+    "lib/actions/todos.ts"
+  ],
+  "tests_added_or_changed": [],
+  "schema_tables_touched": [
+    "todos"
+  ],
+  "agent_summary": "Implemented CBTS-939 (Set priority on a todo): added setTodoPriorityAction Server Action that validates the todoId and priority value and updates Todo.priority via Prisma, revalidating the owning list's path. Added a new TodoPrioritySelect client component (a <select> of LOW/MEDIUM/HIGH, styled per priority, auto-submitting on change via useActionState) and wired it into TodosView between the todo title and the delete button. No schema change was needed -- the Todo.priority column and Priority enum already existed in the schema."
+}
