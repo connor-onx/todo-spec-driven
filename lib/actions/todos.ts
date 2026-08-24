@@ -61,3 +61,27 @@ export async function toggleTodoAction(
 
   return {}
 }
+
+export interface DeleteTodoState {
+  error?: string
+}
+
+export async function deleteTodoAction(
+  todoId: number,
+  listId: number,
+  _prevState: DeleteTodoState,
+  _formData: FormData
+): Promise<DeleteTodoState> {
+  if (!Number.isInteger(todoId) || todoId <= 0) {
+    return { error: "Invalid todo" }
+  }
+
+  try {
+    await prisma.todo.delete({ where: { id: todoId } })
+  } catch {
+    return { error: "Failed to delete todo. Please try again." }
+  }
+
+  revalidatePath(`/lists/${listId}`)
+  return {}
+}
