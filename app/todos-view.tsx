@@ -1,5 +1,6 @@
 import type { Todo } from "@/app/generated/prisma/client"
 import { DeleteTodoButton } from "@/app/delete-todo-button"
+import { DueDateForm } from "@/app/due-date-form"
 import { ToggleTodoButton } from "@/app/toggle-todo-button"
 import { TodoPrioritySelect } from "@/app/todo-priority-select"
 
@@ -28,6 +29,7 @@ export function TodosView({ todos }: TodosViewProps) {
             {todo.title}
           </span>
           <TodoPrioritySelect todoId={todo.id} priority={todo.priority}/>
+          <DueDateForm todoId={todo.id} dueDate={todo.dueDate}/>
           <DeleteTodoButton todoId={todo.id} listId={todo.listId}/>
         </li>
       ))}
