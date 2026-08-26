@@ -1,0 +1,83 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+# One review per PR at a time; a new push cancels the in-flight review.
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Skip drafts and PRs opened by bots (dependabot, renovate, etc.).
+    if: github.event.pull_request.draft == false && github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          use_sticky_comment: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Review this pull request. The PR branch is already checked out in the
+            current working directory; use `gh pr diff` to see what changed.
+
+            ## Project context
+
+            Next.js 16 + React 19 (App Router), Prisma 7 with the `@prisma/adapter-pg`
+            driver adapter, TypeScript, Tailwind CSS 4.
+
+            Read `AGENTS.md` first. This repo pins a Next.js version whose APIs and
+            conventions differ from what you may remember — when a finding depends on
+            Next.js or Prisma behaviour, verify it against the docs bundled in
+            `node_modules/next/dist/docs/` (or the installed Prisma package) before
+            reporting it. Do not report a "bug" that is really a version difference.
+
+            ## What to look for
+
+            - Correctness bugs: wrong logic, unhandled null/undefined, off-by-one,
+              incorrect async handling, missing `await`.
+            - Server/client boundary mistakes: server-only code or secrets reachable
+              from a client component, missing `"use server"`, unserialisable props.
+            - Data layer: N+1 queries, missing transactions where multiple writes must
+              be atomic, unvalidated user input reaching Prisma, schema/migration drift.
+            - Security: hardcoded credentials or API keys (flag for remediation rather
+              than suggesting a workaround), injection, missing authorisation checks,
+              secrets logged or returned in responses.
+            - Accessibility and semantics in new UI: labels, keyboard reachability,
+              contrast-dependent markup.
+            - Tests: new behaviour that ships with no coverage.
+
+            ## How to report
+
+            Comment only on lines this PR actually changed. Prefer a small number of
+            high-confidence findings over an exhaustive list — if you are not confident
+            something is wrong, leave it out. Do not comment on formatting that ESLint
+            or Prettier already governs, and do not restate what the diff does.
+
+            For each finding, say what breaks and under what input or state.
+
+            Use `mcp__github_inline_comment__create_inline_comment` (with
+            `confirmed: true`) for line-specific findings.
+            Use `gh pr comment` for a short summary: overall assessment plus anything
+            that has no single line to anchor to.
+            If the PR looks good, say so briefly in one top-level comment.
+
+            Post your feedback only as GitHub comments — do not return review text as
+            a chat message.
+
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
